@@ -73,6 +73,12 @@ secrets exist (until then it warns and skips):
 | `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with Workers deploy scope. |
 | `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account ID. |
 
+The deploy passes `--compatibility-flags global_fetch_strictly_public` to
+`wrangler deploy`. Without it, Cloudflare refuses a Worker's fetch of another
+Worker on the same account's `workers.dev` (a `404`, error 1042), so
+compat-board and the examples index would always show as down. Bynk can't set
+compatibility flags in the project yet (accuser/bynk#1890).
+
 The Worker is called `status-monitor`. Its cron trigger (`*/5 * * * *`) is
 in the generated `wrangler.toml`. After the first deploy, commit the
 `bynk.deploy.lock` that the workflow uploads as an artifact.
