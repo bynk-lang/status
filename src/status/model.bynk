@@ -1,0 +1,97 @@
+commons status.model
+
+-- The services the status page checks, one check's result, and how a
+-- target's history is summarised.
+---
+A target's short name, as shown on the page.
+---
+type Name = String where Matches("[a-z][a-z0-9-]*")
+
+---
+A service to check: up when `GET url` answers `200`.
+---
+type Target = { name: Name, url: String }
+
+---
+One check of one target. `status` is the HTTP status, or `0` when the
+request never completed (a network error or the platform's timeout). `ms` is
+how long the request took.
+---
+type Check = { at: Int, up: Bool, status: Int, ms: Int }
+
+---
+A target's state as the page and `status.json` show it. Uptime is a
+percentage to one decimal place, scaled by ten (`999` is 99.9%), or `-1`
+when there are no checks in that window. `last_failure_at` is `0` if the
+target has never failed in the retained history.
+---
+type Summary = {
+	name: Name,
+	url: String,
+	checked: Bool,
+	up: Bool,
+	status: Int,
+	ms: Int,
+	last_at: Int,
+	uptime_24h: Int,
+	uptime_7d: Int,
+	last_failure_at: Int,
+	recent: List[Bool],
+}
+
+---
+The services the status page checks. A change here is a pull request.
+---
+fn targets() -> List[Target] {
+	[
+		Target { name: "compat-board", url: "https://compat-board.accuser.workers.dev/board.json" },
+		Target {
+			name: "examples-index",
+			url: "https://examples-index.accuser.workers.dev/examples.json",
+		},
+		Target {
+			name: "registry",
+			url: "https://raw.githubusercontent.com/bynk-lang/.github/main/canary/repos.json",
+		},
+	]
+}
+
+fn hour() -> Int { 3600000 }
+
+fn day() -> Int { 24 * hour() }
+
+---
+Uptime over the checks at or after `sinceMs`, as a percentage scaled by ten,
+or `-1` if there are none.
+---
+fn uptime(checks: List[Check], sinceMs: Int) -> Int {
+	let window = checks.filter((c) => c.at >= sinceMs)
+	let total = window.count()
+	match total {
+		0 => -1,
+		_ => window.filter((c) => c.up).count() * 1000 / total,
+	}
+}
+
+---
+A target's summary from its checks (any order) at time `nowMs`.
+---
+fn summarise(target: Target, checks: List[Check], nowMs: Int) -> Summary {
+	let newestFirst = checks.sortBy((c) => 0 - c.at)
+	let latest = newestFirst.first()
+	let lastFailure = newestFirst.filter((c) => c.up == false).first()
+	let recent = newestFirst.take(48).sortBy((c) => c.at).map((c) => c.up)
+	Summary {
+		name: target.name,
+		url: target.url,
+		checked: latest.isSome(),
+		up: latest.map((c) => c.up).getOrElse(false),
+		status: latest.map((c) => c.status).getOrElse(0),
+		ms: latest.map((c) => c.ms).getOrElse(0),
+		last_at: latest.map((c) => c.at).getOrElse(0),
+		uptime_24h: uptime(checks, nowMs - day()),
+		uptime_7d: uptime(checks, nowMs - 7 * day()),
+		last_failure_at: lastFailure.map((c) => c.at).getOrElse(0),
+		recent: recent,
+	}
+}

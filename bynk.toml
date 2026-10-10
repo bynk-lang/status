@@ -1,0 +1,5 @@
+# Bynk project manifest. status: the bynk-lang org's live Bynk services,
+# checked every five minutes.
+[project]
+name = "status"
+version = "0.1.0"

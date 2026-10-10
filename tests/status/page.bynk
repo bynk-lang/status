@@ -1,0 +1,62 @@
+suite status.page {
+	case "percentages read to one decimal place" {
+		expect percent(1000) == "100.0%"
+		expect percent(999) == "99.9%"
+		expect percent(750) == "75.0%"
+		expect percent(-1) == "–"
+	}
+
+	case "ago reads in minutes, hours, then days" {
+		expect ago(0, 30000) == "just now"
+		expect ago(0, 5 * 60000) == "5 min ago"
+		expect ago(0, 3 * 3600000) == "3 h ago"
+		expect ago(0, 3 * 86400000) == "3 days ago"
+	}
+
+	case "a card shows state, response time, uptime and the strip" {
+		let s = Summary {
+			name: "compat-board",
+			url: "https://compat-board.accuser.workers.dev/board.json",
+			checked: true,
+			up: true,
+			status: 200,
+			ms: 87,
+			last_at: 0,
+			uptime_24h: 1000,
+			uptime_7d: 998,
+			last_failure_at: 0,
+			recent: [true, false, true],
+		}
+		let c = card(s, 60000)
+		expect c.contains("<span class=\"state up\">up</span>")
+		expect c.contains("200 in 87 ms · checked 1 min ago")
+		expect c.contains(
+			"Uptime: 100.0% (24 h) · 99.8% (7 days) · never failed in the last 7 days"
+		)
+		expect c.contains("<i class=\"u\"></i><i class=\"d\"></i><i class=\"u\"></i>")
+	}
+
+	case "a down target with no response, and one never checked" {
+		let down = Summary {
+			name: "registry",
+			url: "https://x.test/",
+			checked: true,
+			up: false,
+			status: 0,
+			ms: 9000,
+			last_at: 0,
+			uptime_24h: 500,
+			uptime_7d: 900,
+			last_failure_at: 0,
+			recent: [false],
+		}
+		expect card(down, 0).contains("<span class=\"state down\">down</span>")
+		expect card(down, 0).contains("no response · checked just now")
+		let none = Summary { ...down, checked: false, recent: [] }
+		expect card(none, 0).contains("not checked yet")
+	}
+
+	case "text is escaped" {
+		expect escape("<a href=\"x\">&</a>") == "&lt;a href=&quot;x&quot;&gt;&amp;&lt;/a&gt;"
+	}
+}
