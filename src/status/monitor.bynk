@@ -1,0 +1,93 @@
+context status.monitor
+
+uses status.model
+uses status.page
+consumes bynk { Clock, Fetch }
+
+-- The status service: every five minutes a cron run checks each target and
+-- records the result in that target's own `Monitor`; the page (`GET /`) and
+-- `GET /status.json` summarise the retained week.
+---
+Checks one URL.
+---
+capability Probe {
+	fn check(url: String) -> Effect[Check]
+}
+
+---
+`Probe` over the platform's `Fetch`: up on `200`, timed with `Clock`. A
+network error or a timeout is a check that's down with status `0`.
+---
+provides Probe = FetchProbe given Clock, Fetch {
+	fn check(url: String) -> Effect[Check] {
+		let start <- Clock.now()
+		let res <- Fetch.send(Request {
+			method: Get,
+			url: url,
+			contentType: None,
+			authorization: None,
+			body: None,
+		})
+		let end <- Clock.now()
+		let at = start.toEpochMillis()
+		let ms = end.toEpochMillis() - at
+		match res {
+			Ok(r) => Check { at: at, up: r.status == 200, status: r.status, ms: ms },
+			Err(_) => Check { at: at, up: false, status: 0, ms: ms },
+		}
+	}
+}
+
+---
+One target's history: every check from the last seven days. One instance per
+target, so no one agent's state grows with the number of targets.
+---
+agent Monitor {
+	key name: Name
+
+	store checks: Log[Check] @retain(7.days)
+
+	on call add(check: Check) -> Effect[()] given Clock {
+		let _ <- checks.append(check)
+	}
+
+	on call history(sinceMs: Int) -> Effect[List[Check]] {
+		checks.since(Instant.fromEpochMillis(sinceMs)).collect()
+	}
+}
+
+service checks from cron {
+	-- A target being down is a result to record, never a failed run.
+	on schedule("*/5 * * * *") () -> Effect[Result[(), String]] given Probe {
+		let _ <- targets().parTraverse((t) => {
+			let check <- Probe.check(t.url)
+			Monitor(t.name).add(check)
+		})
+		Ok(())
+	}
+}
+
+service api from http {
+	on GET("/status.json") () -> Effect[HttpResult[List[Summary]]] by Visitor given Clock {
+		let now <- Clock.now()
+		let none: List[Summary] = []
+		let summaries <- targets().foldEff(none, (acc, t) => {
+			let history <- Monitor(t.name).history(now.toEpochMillis() - 7 * day())
+			acc.prepend(summarise(t, history, now.toEpochMillis()))
+		})
+		Ok(summaries.sortBy((x) => "\(x.name)"))
+	}
+
+	on GET("/") () -> Effect[HttpResult[()]] by Visitor given Clock {
+		let now <- Clock.now()
+		let none: List[Summary] = []
+		let summaries <- targets().foldEff(none, (acc, t) => {
+			let history <- Monitor(t.name).history(now.toEpochMillis() - 7 * day())
+			acc.prepend(summarise(t, history, now.toEpochMillis()))
+		})
+		Raw(
+			Bytes.fromUtf8(render(summaries.sortBy((x) => "\(x.name)"), now.toEpochMillis())),
+			"text/html; charset=utf-8"
+		)
+	}
+}
