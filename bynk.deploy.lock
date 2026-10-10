@@ -1,0 +1,8 @@
+version = 1
+
+[environments.default.kv]
+
+[environments.default.workers.status-monitor]
+deployed = true
+
+[environments.default.workers.status-monitor.contracts]
