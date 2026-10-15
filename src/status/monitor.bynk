@@ -26,6 +26,7 @@ provides Probe = FetchProbe given Clock, Fetch {
 			url: url,
 			contentType: None,
 			authorization: None,
+			headers: Map.empty(),
 			body: None,
 		})
 		let end <- Clock.now()
