@@ -83,7 +83,7 @@ The whole page.
 ---
 fn render(summaries: List[Summary], nowMs: Int) -> String {
 	let cards = join(summaries.map((s) => card(s, nowMs)), "")
-	"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>bynk-lang status</title><style>\(style())</style></head><body><h1>bynk-lang status</h1><p>The org's live <a href=\"https://github.com/accuser/bynk\">Bynk</a> services, checked every five minutes. Also: <a href=\"https://examples-index.accuser.workers.dev/\">the examples index</a>, <a href=\"https://compat-board.accuser.workers.dev/\">the compat board</a>. <a href=\"/status.json\">JSON</a></p><ul>\(cards)</ul></body></html>"
+	"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>bynk-lang status</title><style>\(style())</style></head><body><h1>bynk-lang status</h1><p>The org's live <a href=\"https://github.com/bynk-lang/bynk\">Bynk</a> services, checked every five minutes. Also: <a href=\"https://examples-index.accuser.workers.dev/\">the examples index</a>, <a href=\"https://compat-board.accuser.workers.dev/\">the compat board</a>. <a href=\"/status.json\">JSON</a></p><ul>\(cards)</ul></body></html>"
 }
 
 fn style() -> String {
