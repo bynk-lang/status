@@ -44,7 +44,10 @@ The services the status page checks. A change here is a pull request.
 ---
 fn targets() -> List[Target] {
 	[
-		Target { name: "compat-board", url: "https://compat-board.bynk-lang.workers.dev/board.json" },
+		Target {
+			name: "compat-board",
+			url: "https://compat-board.bynk-lang.workers.dev/board.json",
+		},
 		Target {
 			name: "examples-index",
 			url: "https://examples-index.bynk-lang.workers.dev/examples.json",
