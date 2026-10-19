@@ -16,7 +16,7 @@ suite status.page {
 	case "a card shows state, response time, uptime and the strip" {
 		let s = Summary {
 			name: "compat-board",
-			url: "https://compat-board.accuser.workers.dev/board.json",
+			url: "https://compat-board.bynk-lang.workers.dev/board.json",
 			checked: true,
 			up: true,
 			status: 200,

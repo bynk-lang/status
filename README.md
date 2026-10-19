@@ -10,8 +10,8 @@ that the *running* services answer, between canary runs.
 
 | Target | URL | Up when |
 | --- | --- | --- |
-| compat-board | `https://compat-board.accuser.workers.dev/board.json` | `200` |
-| examples-index | `https://examples-index.accuser.workers.dev/examples.json` | `200` |
+| compat-board | `https://compat-board.bynk-lang.workers.dev/board.json` | `200` |
+| examples-index | `https://examples-index.bynk-lang.workers.dev/examples.json` | `200` |
 | registry | `https://raw.githubusercontent.com/bynk-lang/.github/main/canary/repos.json` | `200` (the examples index depends on it) |
 
 The list is `targets()` in [`src/status/model.bynk`](src/status/model.bynk);
