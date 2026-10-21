@@ -1,3 +1,17 @@
-version = 1
+version = 2
 
 [events]
+
+[agents."status.monitor.Monitor"]
+version = 1
+floor = 1
+
+[[agents."status.monitor.Monitor".shapes]]
+version = 1
+additive = false
+
+[[agents."status.monitor.Monitor".shapes.fields]]
+name = "checks"
+kind = "Log"
+type = "{at: Int, ms: Int, status: Int, up: Bool}"
+refinement = "{at: Int, ms: Int, status: Int, up: Bool}"

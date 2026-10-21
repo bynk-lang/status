@@ -1,7 +1,7 @@
 commons status.model
 
--- The services the status page checks, one check's result, and how a
--- target's history is summarised.
+// The services the status page checks, one check's result, and how a
+// target's history is summarised.
 ---
 A target's short name, as shown on the page.
 ---

@@ -4,9 +4,9 @@ uses status.model
 uses status.page
 consumes bynk { Clock, Fetch }
 
--- The status service: every five minutes a cron run checks each target and
--- records the result in that target's own `Monitor`; the page (`GET /`) and
--- `GET /status.json` summarise the retained week.
+// The status service: every five minutes a cron run checks each target and
+// records the result in that target's own `Monitor`; the page (`GET /`) and
+// `GET /status.json` summarise the retained week.
 ---
 Checks one URL.
 ---
@@ -58,7 +58,7 @@ agent Monitor {
 }
 
 service checks from cron {
-	-- A target being down is a result to record, never a failed run.
+	// A target being down is a result to record, never a failed run.
 	on schedule("*/5 * * * *") () -> Effect[Result[(), String]] given Probe {
 		let _ <- targets().parTraverse((t) => {
 			let check <- Probe.check(t.url)
