@@ -3,8 +3,8 @@ commons status.page
 uses status.model
 uses bynk.string
 
--- The status page: one card per target, with its current state, response
--- time, uptime over a day and a week, and a strip of its recent checks.
+// The status page: one card per target, with its current state, response
+// time, uptime over a day and a week, and a strip of its recent checks.
 ---
 Escapes text for an HTML body or a double-quoted attribute.
 ---
