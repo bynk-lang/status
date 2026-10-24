@@ -10,14 +10,22 @@ type Name = String where Matches("[a-z][a-z0-9-]*")
 ---
 A service to check: up when `GET url` answers `200`.
 ---
-type Target = { name: Name, url: String }
+type Target = {
+	name: Name,
+	url: String,
+}
 
 ---
 One check of one target. `status` is the HTTP status, or `0` when the
 request never completed (a network error or the platform's timeout). `ms` is
 how long the request took.
 ---
-type Check = { at: Int, up: Bool, status: Int, ms: Int }
+type Check = {
+	at: Int,
+	up: Bool,
+	status: Int,
+	ms: Int,
+}
 
 ---
 A target's state as the page and `status.json` show it. Uptime is a
@@ -59,9 +67,13 @@ fn targets() -> List[Target] {
 	]
 }
 
-fn hour() -> Int { 3600000 }
+fn hour() -> Int {
+	3600000
+}
 
-fn day() -> Int { 24 * hour() }
+fn day() -> Int {
+	24 * hour()
+}
 
 ---
 Uptime over the checks at or after `sinceMs`, as a percentage scaled by ten,

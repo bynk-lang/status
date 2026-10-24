@@ -33,8 +33,18 @@ provides Probe = FetchProbe given Clock, Fetch {
 		let at = start.toEpochMillis()
 		let ms = end.toEpochMillis() - at
 		match res {
-			Ok(r) => Check { at: at, up: r.status == 200, status: r.status, ms: ms },
-			Err(_) => Check { at: at, up: false, status: 0, ms: ms },
+			Ok(r) => Check {
+				at: at,
+				up: r.status == 200,
+				status: r.status,
+				ms: ms,
+			},
+			Err(_) => Check {
+				at: at,
+				up: false,
+				status: 0,
+				ms: ms,
+			},
 		}
 	}
 }

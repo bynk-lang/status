@@ -52,7 +52,11 @@ suite status.page {
 		}
 		expect card(down, 0).contains("<span class=\"state down\">down</span>")
 		expect card(down, 0).contains("no response · checked just now")
-		let none = Summary { ...down, checked: false, recent: [] }
+		let none = Summary {
+			...down,
+			checked: false,
+			recent: [],
+		}
 		expect card(none, 0).contains("not checked yet")
 	}
 
