@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BYNK_VERSION: 0.377.2
+  BYNK_VERSION: 0.404.0
 
 jobs:
   plan:
@@ -71,11 +71,6 @@ jobs:
           version: ${{ env.BYNK_VERSION }}
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # The targets include other Workers on this account's workers.dev,
-          # which Cloudflare refuses to fetch from a Worker (404, error 1042)
-          # without this flag. Bynk has no way to set compatibility flags in
-          # the project yet (bynk-lang/bynk#1890), so it goes to wrangler deploy.
-          extra-args: --compatibility-flags global_fetch_strictly_public
 
       # The action never commits. When the deploy changes bynk.deploy.lock (the
       # first deploy records the context), keep the new file to commit.

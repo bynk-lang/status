@@ -10,8 +10,8 @@ that the *running* services answer, between canary runs.
 
 | Target | URL | Up when |
 | --- | --- | --- |
-| compat-board | `https://compat-board.bynk-lang.workers.dev/board.json` | `200` |
-| examples-index | `https://examples-index.bynk-lang.workers.dev/examples.json` | `200` |
+| compat-board | `https://compat-board.bynk-lang.dev/board.json` | `200` |
+| examples-index | `https://examples-index.bynk-lang.dev/examples.json` | `200` |
 | registry | `https://raw.githubusercontent.com/bynk-lang/.github/main/canary/repos.json` | `200` (the examples index depends on it) |
 
 The list is `targets()` in [`src/status/model.bynk`](src/status/model.bynk);
@@ -72,12 +72,6 @@ secrets exist (until then it warns and skips):
 | --- | --- |
 | `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with Workers deploy scope. |
 | `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account ID. |
-
-The deploy passes `--compatibility-flags global_fetch_strictly_public` to
-`wrangler deploy`. Without it, Cloudflare refuses a Worker's fetch of another
-Worker on the same account's `workers.dev` (a `404`, error 1042), so
-compat-board and the examples index would always show as down. Bynk can't set
-compatibility flags in the project yet (bynk-lang/bynk#1890).
 
 The Worker is called `status-monitor`. Its cron trigger (`*/5 * * * *`) is
 in the generated `wrangler.toml`. After the first deploy, commit the
