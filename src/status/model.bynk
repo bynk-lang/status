@@ -54,11 +54,11 @@ fn targets() -> List[Target] {
 	[
 		Target {
 			name: "compat-board",
-			url: "https://compat-board.bynk-lang.workers.dev/board.json",
+			url: "https://compat-board.bynk-lang.dev/board.json",
 		},
 		Target {
 			name: "examples-index",
-			url: "https://examples-index.bynk-lang.workers.dev/examples.json",
+			url: "https://examples-index.bynk-lang.dev/examples.json",
 		},
 		Target {
 			name: "registry",
