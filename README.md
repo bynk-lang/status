@@ -74,8 +74,8 @@ secrets exist (until then it warns and skips):
 | `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account ID. |
 
 The Worker is called `status-monitor`. Its cron trigger (`*/5 * * * *`) is
-in the generated `wrangler.toml`. After the first deploy, commit the
-`bynk.deploy.lock` that the workflow uploads as an artifact.
+in the generated `wrangler.toml`. When a deploy changes `bynk.deploy.lock`,
+bynk-deploy opens a pull request that commits it, through the org's bump App (the workflow mints its token). Merge it: later deploys rely on what it records. Without the App, the workflow uploads the new lock as an artifact named `bynk.deploy.lock` to commit instead.
 
 ## The canary
 
