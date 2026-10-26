@@ -6,3 +6,5 @@ version = 1
 deployed = true
 
 [environments.default.workers.status-monitor.contracts]
+
+[environments.default.workers.status-monitor.expects]
