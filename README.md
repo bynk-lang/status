@@ -52,7 +52,7 @@ measures it.
 ## Run it locally
 
 ```sh
-bynkc test .
+bynk test .
 bynk dev -- --test-scheduled
 ```
 
