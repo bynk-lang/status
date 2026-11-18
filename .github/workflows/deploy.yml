@@ -5,6 +5,7 @@
 #   CLOUDFLARE_API_TOKEN   a Cloudflare API token with Workers deploy scope
 #   CLOUDFLARE_ACCOUNT_ID  the Cloudflare account ID
 # Until they do, the deploy job warns and skips rather than failing main.
+# Each real deploy is then smoke-tested against the live Worker (GET routes).
 # A deploy that changes bynk.deploy.lock opens a pull request committing it,
 # through the org's bump App. The Bynk version is the one in BYNK_VERSION.
 name: Deploy
@@ -85,6 +86,11 @@ jobs:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           lock-pr-token: ${{ steps.app-token.outputs.token }}
+          # Then call every GET route of the live Worker (`[test.targets.live]`
+          # in bynk.toml) and fail the job on a 5xx or an undecodable body. The
+          # deploy stays in place if it fails.
+          smoke: "true"
+          smoke-target: live
 
       # When the deploy changed bynk.deploy.lock but no pull request could be
       # opened for it (no App token), keep the new file to commit by hand.
