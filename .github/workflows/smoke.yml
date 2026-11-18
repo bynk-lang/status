@@ -1,0 +1,41 @@
+# Nightly smoke test of the live service: call every GET route of the deployed
+# Worker (`[test.targets.live]` in bynk.toml) and fail on a 5xx or a body that
+# doesn't decode as the route's declared type.
+#
+# The deploy workflow smokes each deploy; this catches what breaks between
+# deploys, such as a failure that only appears as stored data grows. It only
+# reads, and needs no secrets. The Bynk version is the one in BYNK_VERSION.
+name: Smoke
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 03:17 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Smoke the live service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: bynk-lang/setup-bynk@3ee807123be2578fd5d5be518fbc2b489aef6171 # v2.0.1
+        with:
+          version-file: BYNK_VERSION
+
+      # The smoke runner compiles TypeScript; without tsc it fetches it with npx.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Smoke
+        run: bynk test --smoke --against live .

@@ -73,6 +73,15 @@ secrets exist (until then it warns and skips):
 | `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with Workers deploy scope. |
 | `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account ID. |
 
+After each real deploy, the workflow smoke-tests the live Worker: `bynk test
+--smoke --against live` calls every `GET` route and fails the job on a `5xx`
+or a body that doesn't decode as its declared type. The deploy stays in place
+if it fails. [`smoke.yml`](.github/workflows/smoke.yml) runs the same smoke
+nightly, to catch what breaks between deploys. The `live` target is in
+`bynk.toml`. It isn't marked `production = true`, which `--against` refuses: a
+smoke calls only `GET` routes against a target, and this service's only read.
+Run it by hand with `bynk test --smoke --against live`.
+
 The Worker is called `status-monitor`. Its cron trigger (`*/5 * * * *`) is
 in the generated `wrangler.toml`. When a deploy changes `bynk.deploy.lock`,
 bynk-deploy opens a pull request that commits it, through the org's bump App (the workflow mints its token). Merge it: later deploys rely on what it records. Without the App, the workflow uploads the new lock as an artifact named `bynk.deploy.lock` to commit instead.

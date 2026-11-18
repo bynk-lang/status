@@ -3,3 +3,10 @@
 [project]
 name = "status"
 version = "0.1.0"
+
+# The live deployment, for `bynk test --smoke --against live` (after each
+# deploy and nightly). Not marked `production = true`, which `--against`
+# refuses: the smoke calls only `GET` routes against a target, and this
+# service's `GET` routes only read.
+[test.targets.live]
+url.status-monitor = "https://status-monitor.bynk-lang.workers.dev"
