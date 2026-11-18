@@ -15,3 +15,23 @@ name = "checks"
 kind = "Log"
 type = "{at: Int, ms: Int, status: Int, up: Bool}"
 refinement = "{at: Int, ms: Int, status: Int, up: Bool}"
+
+[[agents."status.monitor.Monitor".shapes.fields.paths]]
+path = "checks"
+type = "{}"
+
+[[agents."status.monitor.Monitor".shapes.fields.paths]]
+path = "checks.at"
+type = "Int"
+
+[[agents."status.monitor.Monitor".shapes.fields.paths]]
+path = "checks.ms"
+type = "Int"
+
+[[agents."status.monitor.Monitor".shapes.fields.paths]]
+path = "checks.status"
+type = "Int"
+
+[[agents."status.monitor.Monitor".shapes.fields.paths]]
+path = "checks.up"
+type = "Bool"
