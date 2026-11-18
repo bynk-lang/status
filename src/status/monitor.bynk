@@ -62,8 +62,11 @@ agent Monitor {
 		let _ <- checks.append(check)
 	}
 
+	// Reads the newest checks with `recent` and filters them here, not with
+	// `since`: Bynk's runtime throws on a `since` window of more than 512
+	// entries (bynk-lang/bynk#3747). A week is at most 2,016 checks.
 	on call history(sinceMs: Int) -> Effect[List[Check]] {
-		checks.since(Instant.fromEpochMillis(sinceMs)).collect()
+		checks.recent(2100).filter((c) => c.at >= sinceMs).collect()
 	}
 }
 
